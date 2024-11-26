@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #define MAX_TACHES 100
 #define TITRE_MAX 100
@@ -18,6 +19,27 @@ typedef struct {
 Tache taches[MAX_TACHES];
 int nombreTaches = 0;
 
+// Fonction pour valider la date
+bool estDateValide(const char *date) {
+    int year, month, day;
+    if (sscanf(date, "%4d-%2d-%2d", &year, &month, &day) != 3) {
+        return false; // Format incorrect
+    }
+
+    if (month < 1 || month > 12) {
+        return false; // Mois invalide
+    }
+
+    int joursDansMois[] = { 0, 31, 28 + (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+    
+    if (day < 1 || day > joursDansMois[month]) {
+        return false; // Jour invalide
+    }
+
+    return true; // Date valide
+}
+
+// L'affichage menu
 void afficherMenu() {
     printf("\n=== Menu ===\n");
     printf("1. Ajouter une tâche\n");
@@ -26,11 +48,12 @@ void afficherMenu() {
     printf("4. Supprimer une tâche\n");
     printf("5. Filtrer les tâches\n");
     printf("6. Trier les tâches\n");
-    printf("7. sauvgarder les taches\n");
+    printf("7. Sauvegarder les tâches\n");
     printf("0. Quitter\n");
     printf("Veuillez entrer votre choix: ");
 }
 
+// L'addition des tâches
 void ajouterTache() {
     if (nombreTaches >= MAX_TACHES) {
         printf("Limite de tâches atteinte.\n");
@@ -39,7 +62,7 @@ void ajouterTache() {
     
     Tache nouvelleTache;
     printf("Titre: ");
-    getchar();
+    getchar(); // pour consommer la retour à ligne
     fgets(nouvelleTache.titre, TITRE_MAX, stdin);
     nouvelleTache.titre[strcspn(nouvelleTache.titre, "\n")] = '\0';
 
@@ -47,11 +70,17 @@ void ajouterTache() {
     fgets(nouvelleTache.description, DESCRIPTION_MAX, stdin);
     nouvelleTache.description[strcspn(nouvelleTache.description, "\n")] = '\0';
 
-    printf("Date d'échéance (YYYY-MM-DD): ");
-    fgets(nouvelleTache.dateEcheance, DATE_MAX, stdin);
-    nouvelleTache.dateEcheance[strcspn(nouvelleTache.dateEcheance, "\n")] = '\0';
+    do {
+        printf("Date d'échéance (YYYY-MM-DD): ");
+        fgets(nouvelleTache.dateEcheance, DATE_MAX, stdin);
+        nouvelleTache.dateEcheance[strcspn(nouvelleTache.dateEcheance, "\n")] = '\0';
+        if (!estDateValide(nouvelleTache.dateEcheance)) {
+            printf("Date invalide. Veuillez entrer une date au format YYYY-MM-DD.\n");
+        }
+    } while (!estDateValide(nouvelleTache.dateEcheance));
 
     printf("Priorité (High/Low): ");
+    getchar();
     fgets(nouvelleTache.priorite, 10, stdin);
     nouvelleTache.priorite[strcspn(nouvelleTache.priorite, "\n")] = '\0';
 
@@ -60,6 +89,7 @@ void ajouterTache() {
     printf("Tâche ajoutée avec succès.\n");
 }
 
+// Affichage des tâches
 void afficherTaches() {
     if (nombreTaches == 0) {
         printf("Aucune tâche à afficher.\n");
@@ -78,6 +108,7 @@ void afficherTaches() {
     }
 }
 
+// Modification des tâches
 void modifierTache() {
     int index;
     afficherTaches();
@@ -95,9 +126,14 @@ void modifierTache() {
     fgets(tache->description, DESCRIPTION_MAX, stdin);
     tache->description[strcspn(tache->description, "\n")] = '\0';
 
-    printf("Modifier la date d'échéance (actuelle: %s): ", tache->dateEcheance);
-    fgets(tache->dateEcheance, DATE_MAX, stdin);
-    tache->dateEcheance[strcspn(tache->dateEcheance, "\n")] = '\0';
+    do {
+        printf("Modifier la date d'échéance (actuelle: %s): ", tache->dateEcheance);
+        fgets(tache->dateEcheance, DATE_MAX, stdin);
+        tache->dateEcheance[strcspn(tache->dateEcheance, "\n")] = '\0';
+        if (!estDateValide(tache->dateEcheance)) {
+            printf("Date invalide. Veuillez entrer une date au format YYYY-MM-DD.\n");
+        }
+    } while (!estDateValide(tache->dateEcheance));
 
     printf("Modifier la priorité (actuelle: %s): ", tache->priorite);
     fgets(tache->priorite, 10, stdin);
@@ -106,6 +142,7 @@ void modifierTache() {
     printf("Tâche modifiée avec succès.\n");
 }
 
+// Suppression des tâches
 void supprimerTache() {
     int index;
     afficherTaches();
@@ -125,6 +162,7 @@ void supprimerTache() {
     printf("Tâche supprimée avec succès.\n");
 }
 
+// Filtration des tâches
 void filtrerTaches() {
     char priorite[10];
     printf("Entrez la priorité à filtrer (High/Low): ");
@@ -145,6 +183,7 @@ void filtrerTaches() {
     }
 }
 
+// Triage des tâches
 void trierTaches() {
     for (int i = 0; i < nombreTaches - 1; i++) {
         for (int j = 0; j < nombreTaches - i - 1; j++) {
@@ -158,6 +197,7 @@ void trierTaches() {
     printf("Tâches triées par date d'échéance.\n");
 }
 
+// Sauvegarde des tâches
 void sauvegarderTaches() {
     FILE *file = fopen("taches.txt", "w");
     if (file == NULL) {
@@ -200,4 +240,3 @@ int main() {
     
     return 0;
 }
-
