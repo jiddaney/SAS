@@ -24,7 +24,7 @@ typedef struct {
 Tache taches[MAX_TACHES];
 int nombreTaches = 0;
 
-// add
+// add date
 
 void addDate(Tache* nouvelleTache) {
      int day, month, year;
@@ -50,24 +50,24 @@ void addDate(Tache* nouvelleTache) {
     printf("=>year: ");
     scanf("%d", &year);
      if (year < 2024){
-        printf("year invalid!! \n");
+        printf("anee invalid!! \n");
      }
       }while (year < 2024);
       nouvelleTache->dateEcheance.year = year;
 }
-
+// add titre
 void addTitre(Tache* nouvelleTache){
     printf("Titre: "); 
     fgets(nouvelleTache->titre, TITRE_MAX, stdin);
     nouvelleTache->titre[strcspn(nouvelleTache->titre, "\n")] = '\0';
 }
-
+//add description
 void addDesc(Tache* nouvelleTache) {
     printf("Description: ");
     fgets(nouvelleTache->description, DESCRIPTION_MAX, stdin);
     nouvelleTache->description[strcspn(nouvelleTache->description, "\n")] = '\0';
 }
-
+//add priorite
 void addpriorite(Tache* nouvelleTache){
     int preoritie;
     do
@@ -78,7 +78,7 @@ void addpriorite(Tache* nouvelleTache){
     } while (preoritie != 0 && preoritie != 1);
     nouvelleTache->priorite = preoritie;
 }
-
+//add statut
 void addstatut(Tache* nouvelleTache){
     int statut;
     do
@@ -91,11 +91,10 @@ void addstatut(Tache* nouvelleTache){
     nouvelleTache->complete = statut;
     
 }
-
 // L'affichage menu
 void afficherMenu() {
     printf("\n=== Menu ===\n");
-    printf("1. Ajouter une tâcheuuuu\n");
+    printf("1. Ajouter une tâche\n");
     printf("2. Afficher les tâches\n");
     printf("3. Modifier une tâche\n");
     printf("4. Supprimer une tâche\n");
@@ -104,7 +103,6 @@ void afficherMenu() {
     printf("0. Quitter\n");
     printf("Veuillez entrer votre choix: ");
 }
-
 // L'addition des tâches
 void ajouterTache() {
     if (nombreTaches >= MAX_TACHES) {
@@ -129,7 +127,6 @@ void ajouterTache() {
     nombreTaches++;
     printf("l'ajoute de tache avec succes!!");
 }
-
 // Affichage des tâches
 void afficherTaches() {
 
@@ -149,7 +146,6 @@ void afficherTaches() {
         printf("\n");
     }
 }
-
 // Modification des tâches
 void modifierTache() {
     int update_titre,update_descrip,update_date,update_priorite,update_satatut;
@@ -228,7 +224,6 @@ void modifierTache() {
 
     printf("Tâche modifiée avec succès.\n");
 }
-
 // Suppression des tâches
 void supprimerTache() {
     int index;
@@ -248,7 +243,6 @@ void supprimerTache() {
     nombreTaches--;
     printf("Tâche supprimée avec succès.\n");
 }
-
 // Filtration des tâches
 void filtrerTaches() {
     int filter;
@@ -274,8 +268,6 @@ void filtrerTaches() {
         }
     }
 }
-
-
 // Sauvegarde des tâches
 void sauvegarderTaches() {
     FILE *file = fopen("taches.txt", "w");
